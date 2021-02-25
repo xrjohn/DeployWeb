@@ -3,14 +3,16 @@ using System;
 using DeployWeb.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DeployWeb.Migrations
 {
     [DbContext(typeof(DeployDbContext))]
-    partial class DeployDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210225103316_ModifyTable")]
+    partial class ModifyTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

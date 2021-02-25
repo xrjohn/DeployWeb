@@ -1,8 +1,23 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+@model DeployWeb.Models.PayloadViewModel
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+<div>
+    <ul class="layui-nav" lay-filter="">
+        <li class="layui-nav-item">
+            <a href="javascript:;">@Model.Repository.Full_name</a>
+            <dl class="layui-nav-child">
+                <!-- 二级菜单 -->
+                @foreach (var reff in Model.Repository.Refs)
+                {
+                    <dd><a href="#@Model.Repository.Full_name - @reff.Ref">@reff.Ref</a></dd>
+                }
+            </dl>
+        </li>
+    </ul>
+
 </div>
+
+

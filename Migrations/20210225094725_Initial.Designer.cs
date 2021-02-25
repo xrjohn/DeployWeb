@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeployWeb.Migrations
 {
     [DbContext(typeof(DeployDbContext))]
-    [Migration("20210209075302_Initial")]
+    [Migration("20210225094725_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -17,6 +17,28 @@ namespace DeployWeb.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "5.0.2");
+
+            modelBuilder.Entity("DeployWeb.Data.Model.Branch", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("BranchName")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Ref")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("RepositoryId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("t_branch");
+                });
 
             modelBuilder.Entity("DeployWeb.Data.Model.Commit", b =>
                 {
@@ -27,11 +49,14 @@ namespace DeployWeb.Migrations
                     b.Property<string>("Added")
                         .HasColumnType("TEXT");
 
-                    b.Property<long?>("AuthorId")
+                    b.Property<int>("AuthorId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<long?>("CommitterId")
+                    b.Property<int>("CommitterId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Message")
                         .HasMaxLength(500)
@@ -39,9 +64,6 @@ namespace DeployWeb.Migrations
 
                     b.Property<string>("Modified")
                         .HasColumnType("TEXT");
-
-                    b.Property<long>("PayloadId")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Removed")
                         .HasColumnType("TEXT");
@@ -55,14 +77,7 @@ namespace DeployWeb.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthorId");
-
-                    b.HasIndex("CommitterId");
-
-                    b.HasIndex("PayloadId")
-                        .IsUnique();
-
-                    b.ToTable("Commits");
+                    b.ToTable("t_commit");
                 });
 
             modelBuilder.Entity("DeployWeb.Data.Model.Payload", b =>
@@ -75,24 +90,37 @@ namespace DeployWeb.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Commits")
+                    b.Property<int>("BranchId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CommitIds")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Head_commitId")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("PusherId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Ref")
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("RepositoryId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Payloads");
+                    b.ToTable("t_payload");
                 });
 
             modelBuilder.Entity("DeployWeb.Data.Model.PayloadUser", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -104,24 +132,18 @@ namespace DeployWeb.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
-                    b.Property<long>("PayloadId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Username")
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PayloadId")
-                        .IsUnique();
-
-                    b.ToTable("PayloadUsers");
+                    b.ToTable("t_payloaduser");
                 });
 
             modelBuilder.Entity("DeployWeb.Data.Model.Repository", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -133,67 +155,75 @@ namespace DeployWeb.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
-                    b.Property<long>("PayloadId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Url")
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PayloadId")
-                        .IsUnique();
-
-                    b.ToTable("Repositorys");
+                    b.ToTable("t_repository");
                 });
 
-            modelBuilder.Entity("DeployWeb.Data.Model.Commit", b =>
+            modelBuilder.Entity("DeployWeb.Data.Model.Solution", b =>
                 {
-                    b.HasOne("DeployWeb.Data.Model.PayloadUser", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
 
-                    b.HasOne("DeployWeb.Data.Model.PayloadUser", "Committer")
-                        .WithMany()
-                        .HasForeignKey("CommitterId");
+                    b.Property<int>("BranchId")
+                        .HasColumnType("INTEGER");
 
-                    b.HasOne("DeployWeb.Data.Model.Payload", null)
-                        .WithOne("Head_commit")
-                        .HasForeignKey("DeployWeb.Data.Model.Commit", "PayloadId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<string>("FtpAccount")
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
 
-                    b.Navigation("Author");
+                    b.Property<string>("FtpAddress")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
 
-                    b.Navigation("Committer");
+                    b.Property<string>("FtpPassword")
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SolutionName")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("t_solution");
                 });
 
-            modelBuilder.Entity("DeployWeb.Data.Model.PayloadUser", b =>
+            modelBuilder.Entity("DeployWeb.Data.Model.TranscationRecord", b =>
                 {
-                    b.HasOne("DeployWeb.Data.Model.Payload", null)
-                        .WithOne("Pusher")
-                        .HasForeignKey("DeployWeb.Data.Model.PayloadUser", "PayloadId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
 
-            modelBuilder.Entity("DeployWeb.Data.Model.Repository", b =>
-                {
-                    b.HasOne("DeployWeb.Data.Model.Payload", null)
-                        .WithOne("Repository")
-                        .HasForeignKey("DeployWeb.Data.Model.Repository", "PayloadId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
+                    b.Property<string>("AddLists")
+                        .HasColumnType("TEXT");
 
-            modelBuilder.Entity("DeployWeb.Data.Model.Payload", b =>
-                {
-                    b.Navigation("Head_commit");
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("TEXT");
 
-                    b.Navigation("Pusher");
+                    b.Property<int>("FromSolutionId")
+                        .HasColumnType("INTEGER");
 
-                    b.Navigation("Repository");
+                    b.Property<string>("ModifyLists")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RemoveLists")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("SoftRemove")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ToSolutionId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("t_transcationrecord");
                 });
 #pragma warning restore 612, 618
         }

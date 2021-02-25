@@ -6,25 +6,26 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using DeployWeb.Models;
+using DeployWeb.Data;
+using DeployWeb.Data.Model;
 
 namespace DeployWeb.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly DeployDbContext _deployDbContext;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, DeployDbContext deployDbContext)
         {
             _logger = logger;
+            _deployDbContext = deployDbContext;
         }
 
         public IActionResult Index()
         {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
+            var model = new PayloadViewModel();
+            var reps = _deployDbContext.Query<Repository>("SELECT DISTINCT Id, Name, Full_name, Url FROM Repository ");
             return View();
         }
 

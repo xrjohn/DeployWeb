@@ -26,7 +26,7 @@ namespace DeployWeb
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddDbContext<DeployDbContext>(options => options.UseSqlite(Configuration.GetConnectionString("DeployDbContext")));
+            services.AddDbContext<DeployDbContext>(options => options.UseSqlite(Configuration.GetConnectionString("Default")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

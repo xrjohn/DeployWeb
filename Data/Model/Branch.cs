@@ -7,14 +7,16 @@ using System.Threading.Tasks;
 
 namespace DeployWeb.Data.Model
 {
-    [Table("t_repository")]
-    public class Repository : Entity<int>
+    [Table("t_branch")]
+    public class Branch
     {
         [StringLength(100)]
-        public string Name { get; set; }
+        public string Id { get; set; }
+        public int RepositoryId { get; set; }
+        [StringLength(200)]
+        public string Ref { get; set; }
         [StringLength(100)]
-        public string Full_name { get; set; }
-        [StringLength(100)]
-        public string Url { get; set; }
+        public string BranchName { get; set; }
+
     }
 }
