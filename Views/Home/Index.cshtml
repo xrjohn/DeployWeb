@@ -4,20 +4,40 @@
 @model DeployWeb.Models.PayloadViewModel
 
 
-<div>
-    <ul class="layui-nav" lay-filter="">
-        <li class="layui-nav-item">
-            <a href="javascript:;">@Model.Repository.Full_name</a>
-            <dl class="layui-nav-child">
-                <!-- 二级菜单 -->
-                @foreach (var reff in Model.Repository.Refs)
-                {
-                    <dd><a href="#@Model.Repository.Full_name - @reff.Ref">@reff.Ref</a></dd>
-                }
-            </dl>
-        </li>
-    </ul>
-
+<div class="layui-container">
+    <div class="layui-row">
+        <div class="layui-col-md3">
+            <div id="treeMenu"></div>
+        </div>
+        <div class="layui-col-md9">
+            <table id="tbpayload" class="layui-table" lay-filter="payloaddata"></table>
+        </div>
+    </div>
 </div>
 
+<script type="text/javascript">
+    layui.use('tree', 'table', function () {
+        var tree = layui.tree;
+        var table = layui.table;
+
+        //render menu
+        var treeMenu = tree.render({
+            elem: '#treeMenu',
+            showLine: false,
+            data: [],
+            id: 'BranchId',//define index
+            click: function (obj) {
+                console.log(obj.data); //得到当前点击的节点数据
+                console.log(obj.state); //得到当前节点的展开状态：open、close、normal
+                console.log(obj.elem); //得到当前节点元素
+                console.log(obj.data.children); //当前节点下是否有子节点
+            }
+        });
+
+        var tableData = table.render({
+            elem: '#tbpayload',
+            url:'/home/'
+        });
+    });
+</script>
 

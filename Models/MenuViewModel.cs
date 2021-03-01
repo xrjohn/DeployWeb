@@ -1,18 +1,20 @@
-﻿using DeployWeb.Data.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace DeployWeb.Models
 {
-    public class PayloadViewModel
+    public class MenuViewModel
     {
-        public long Id { get; set; }
         public int RepositoryId { get; set; }
-        public string RepositoryFullName { get; set; }
+        public string RepositoryName { get; set; }
+        public List<BranchViewModel> Branches { get; set; }
+    }
+
+    public class BranchViewModel
+    {
         public string BranchId { get; set; }
         public string BranchName { get; set; }
     }
-
 }

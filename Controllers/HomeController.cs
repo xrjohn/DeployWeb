@@ -26,13 +26,18 @@ namespace DeployWeb.Controllers
         {
             var model = new PayloadViewModel();
             var reps = _deployDbContext.Query<Repository>("SELECT DISTINCT Id, Name, Full_name, Url FROM Repository ");
-            return View();
+            return View(reps);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        public object GetPayloadDatas(string branchId)
+        {
+            return null;
         }
     }
 }

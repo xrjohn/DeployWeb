@@ -13,7 +13,7 @@ namespace DeployWeb.Data.Model
         [StringLength(100)]
         public string Name { get; set; }
         [StringLength(100)]
-        public string Full_name { get; set; }
+        public string Full_Name { get; set; }
         [StringLength(100)]
         public string Url { get; set; }
     }
