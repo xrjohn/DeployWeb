@@ -25,8 +25,8 @@ namespace DeployWeb.Controllers
         public IActionResult Index()
         {
             var model = new PayloadViewModel();
-            var reps = _deployDbContext.Query<Repository>("SELECT DISTINCT Id, Name, Full_name, Url FROM Repository ");
-            return View(reps);
+            var reps = _deployDbContext.Query<Repository>("SELECT DISTINCT Id, Name, Full_name, Url FROM t_repository ");
+            return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -37,6 +37,7 @@ namespace DeployWeb.Controllers
 
         public object GetPayloadDatas(string branchId)
         {
+            var reps = _deployDbContext.Query<Repository>("SELECT DISTINCT Id RepositoryId, Name RepositoryName, Full_name, Url FROM t_repository ");
             return null;
         }
     }

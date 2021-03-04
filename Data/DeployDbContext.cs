@@ -14,14 +14,14 @@ namespace DeployWeb.Data
 {
     public class DeployDbContext : DbContext
     {
-        private static IConfiguration Configuration { get; }
+        private static IConfiguration Configuration { get; set; }
         private static IDbConnection dbConnection = null;
         private static string _pagedSql = " Order By {0} {1} LIMIT {2} OFFSET (({3}-1) * {2})";
         private static IDbConnection DbConnection
         {
             get
             {
-                if (dbConnection == null)
+                if (dbConnection == null || string.IsNullOrWhiteSpace(dbConnection.ConnectionString))
                 {
                     dbConnection = new SqliteConnection(Configuration.GetConnectionString("Default"));
                 }
@@ -33,19 +33,25 @@ namespace DeployWeb.Data
                 return dbConnection;
             }
         }
+        public DeployDbContext(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
         public DbSet<Commit> Commits { get; set; }
         public DbSet<Payload> Payloads { get; set; }
         public DbSet<Repository> Repositorys { get; set; }
         public DbSet<Branch> Branches { get; set; }
         public DbSet<Solution> Solutions { get; set; }
         public DbSet<TranscationRecord> TranscationRecords { get; set; }
+        protected override void OnConfiguring(DbContextOptionsBuilder options) => options.UseSqlite("Data Source = DeployDb.db;");
 
-        public DeployDbContext(DbContextOptions<DeployDbContext> options) : base(options)
-        {
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder.UseSqlite(Configuration.GetConnectionString("Default"));
+        //}
 
-        }
-
-        public IEnumerable<T> Query<T>(string sql, params object[] sqlParas)
+        public IEnumerable<T> Query<T>(string sql, object sqlParas = null)
         {
             IEnumerable<T> dy = null;
             using (IDbConnection db = DbConnection)
@@ -57,7 +63,7 @@ namespace DeployWeb.Data
             return dy;
         }
 
-        public T QueryFirstOrDefault<T>(string sql, params object[] sqlParas)
+        public T QueryFirstOrDefault<T>(string sql, object sqlParas = null)
         {
             T dy;
             using (IDbConnection db = DbConnection)
@@ -69,7 +75,7 @@ namespace DeployWeb.Data
             return dy;
         }
 
-        public int ExecuteNonQuery(string sql, object param)
+        public int ExecuteNonQuery(string sql, object param = null)
         {
             int count = 0;
             using (IDbConnection db = DbConnection)
